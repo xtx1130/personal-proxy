@@ -2,7 +2,7 @@
 
 #### 关掉全局代理端口，启用浏览器端口代理，使用SwitchyOmega进行浏览器代理
 + ife代理和内部聊天工具一起使用有bug
-+ 对QQ音乐支持的不好
++ ife对QQ音乐支持的不好
 + 本工具暂时不支持https，已经预留端口8889等ife https上线后会接入 
 + SwitchyOmega设置代理的时候请单独设置http代理，https暂时不要设置，否则会造成https页面访问不了
 
