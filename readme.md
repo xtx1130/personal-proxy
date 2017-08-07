@@ -13,3 +13,6 @@
 请确保本地已经装了forever，npm run start 的时候调用的forever启动的  
 请确保本地8888和8889端口未被占用  
 可以关掉全局http代理6666端口，但是一定要启用ife的6666端口，相关逻辑可以自己在本地ife源码中修改一下就好了
+
+#### changeLog
++ 1.0.1 增加http对scoket的支持
