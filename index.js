@@ -101,7 +101,7 @@ httpServer.listen(8888,() => {
 //https proxy
 let httpsServer = https.createServer(options, app.callback());
 httpsServer.on('connect',function(req,res){
-	//TO DO :整合http和https加入socket支持
+	//TO DO :整合http和https
 	console.log('httpsServer')
 });
 httpsServer.listen(8089, function () {
