@@ -4,15 +4,15 @@ const Koa = require('koa');
 const send = require('koa-send');
 const Router = require('koa-router');
 const jsonp = require('jsonp-body');
-const httpProxy = require('http-proxy');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const proxyPlugin = require('./plugins/proxy');
+const net = require('net');
 
 const app = new Koa();
 const router = new Router();
-const proxyJs = new httpProxy.createProxyServer({});
 
 //在这里修改mock路径，只支持jsonp接口，支持正则或者字符串匹配
 let mock = [
@@ -45,15 +45,7 @@ app.use(async (ctx,next) => {
 	if(!flag)
 		await next();
 });
-router.get('*', async ctx => {
-    proxyJs.web(ctx.req, ctx.res,{target:'http://127.0.0.1:6666',toProxy:true,prependPath:false});
-    ctx.body = ctx.res;
-});
-router.post('*', async ctx => {
-    proxyJs.web(ctx.req, ctx.res,{target:'http://127.0.0.1:6666',toProxy:true,prependPath:false});
-    ctx.body = ctx.res;
-});
-app.use(router.routes());
+app.use(proxyPlugin.routes());
 
 //socket proxy
 let socketProxy = (req,socket,head) => {
