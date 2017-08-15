@@ -14,6 +14,10 @@
 请确保本地8888和8889端口未被占用  
 可以关掉全局http代理6666端口，但是一定要启用ife的6666端口，相关逻辑可以自己在本地ife源码中修改一下就好了
 
+#### 插件开发
+请按照 /plugins/middleware/mock.js的形式开发插件，插件为koa2的插件，需要暴露出middleware方法供给koa注册插件，开发的koa2的插件一律放在/plugins/middleware/目录下面。
+
 #### changeLog
 + 1.0.1 增加http对scoket的支持
 + 1.0.3 修正了net的bug
++ 1.0.5 代码重构，文件夹重写，增加插件机制，可随意添加插件
