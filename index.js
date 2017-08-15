@@ -3,49 +3,22 @@
 const Koa = require('koa');
 const send = require('koa-send');
 const Router = require('koa-router');
-const jsonp = require('jsonp-body');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const net = require('net');
 const proxyPlugin = require('./plugins/proxy');
-const mockPlugin = 
+const mockPlugin = require('./plugins/mock');
 
 const app = new Koa();
 const router = new Router();
 
-//在这里修改mock路径，只支持jsonp接口，支持正则或者字符串匹配
-let mock = [
-	{
-		url:new RegExp(/\apis\/msg\/list_messages\.action/),
-		path:'/mock/list_messages.json'
-	},
-	{
-		url:new RegExp(/\/apis\/msg\/list_comments\.action/),
-		path:'/mock/list_comments.json'
-	}
-];
 let options = {
     key: fs.readFileSync(path.join(__dirname+'/privatekey.pem')),
     cert: fs.readFileSync(path.join(__dirname+'/certificate.pem'))
 };
-app.use(async (ctx,next) => {
-	let flag = 0;
-	for (let i = 0; i < mock.length; i++) {
-		if (ctx.req.url.match(mock[i].url)) {
-			flag = 1;
-			if (ctx.query.callback) {
-				ctx.set('Content-Type', 'text/javascript');
-			} else {
-				ctx.set('Content-Type', 'application/json');
-			}
-			ctx.body = jsonp(fs.readFileSync(path.join(__dirname+mock[i].path)).toString(), ctx.query.callback);
-		}
-	}
-	if(!flag)
-		await next();
-});
+app.use(mockPlugin.middleware());
 app.use(proxyPlugin.routes());
 
 //socket proxy
