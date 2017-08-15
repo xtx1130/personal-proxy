@@ -1,8 +1,10 @@
 'use strict';
 
-const config = require('../config/mock-config');
-const isAsync = require('../deps/isAsyncFunction');
 const jsonp = require('jsonp-body');
+const fs = require('fs');
+const path = require('path');
+const config = require(_path+'/config/mock-config');
+const isAsync = require(_path+'/deps/isAsyncFunction');
 
 class mock {
 	constructor() {
@@ -24,7 +26,7 @@ class mock {
 						} else {
 							ctx.set('Content-Type', 'application/json');
 						}
-						ctx.body = jsonp(fs.readFileSync(path.join(__dirname + config[i].path)).toString(), ctx.query.callback);
+						ctx.body = jsonp(fs.readFileSync(path.join(_path + config[i].path)).toString(), ctx.query.callback);
 					}
 				}
 				if (!flag)

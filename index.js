@@ -1,7 +1,7 @@
 'use strict';
 
 const Koa = require('koa');
-const send = require('koa-send');
+//const send = require('koa-send');
 const Router = require('koa-router');
 const http = require('http');
 const https = require('https');
@@ -9,16 +9,21 @@ const fs = require('fs');
 const path = require('path');
 const net = require('net');
 const proxyPlugin = require('./plugins/proxy');
-const mockPlugin = require('./plugins/mock');
+const scanner = require('./deps/scanner');
 
 const app = new Koa();
 const router = new Router();
+
+global._path = __dirname;
 
 let options = {
     key: fs.readFileSync(path.join(__dirname+'/privatekey.pem')),
     cert: fs.readFileSync(path.join(__dirname+'/certificate.pem'))
 };
-app.use(mockPlugin.middleware());
+for(let i = 0; i<scanner.length;i++){
+	let middleWare = require(path.join(__dirname+'/plugins/middleware/'+scanner[i]));
+	app.use(middleWare.middleware());
+}
 app.use(proxyPlugin.routes());
 
 //socket proxy
