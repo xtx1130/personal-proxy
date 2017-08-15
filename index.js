@@ -22,8 +22,12 @@ const options = {
 };
 
 for(let i = 0; i<scanner.length;i++){
-	let middleWare = require(path.join(__dirname+'/plugins/middleware/'+scanner[i]));
-	app.use(middleWare.middleware());
+	try {
+		let middleWare = require(path.join(__dirname + '/plugins/middleware/' + scanner[i]));
+		app.use(middleWare.middleware());
+	} catch (e) {
+		throw new Error(e);
+	}
 }
 app.use(proxyPlugin.routes());
 
