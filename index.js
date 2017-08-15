@@ -7,62 +7,27 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
-const net = require('net');
-const proxyPlugin = require('./plugins/proxy');
-const scanner = require('./deps/scanner');
 
-const app = new Koa();
-const router = new Router();
+const scanner = require('./deps/scanner');
+const proxyPlugin = require('./plugins/httpProxy');
+const socketProxy = require('./plugins/socketProxy');
 
 global._path = __dirname;
 
-let options = {
+const app = new Koa();
+const router = new Router();
+const options = {
     key: fs.readFileSync(path.join(__dirname+'/privatekey.pem')),
     cert: fs.readFileSync(path.join(__dirname+'/certificate.pem'))
 };
+
 for(let i = 0; i<scanner.length;i++){
 	let middleWare = require(path.join(__dirname+'/plugins/middleware/'+scanner[i]));
 	app.use(middleWare.middleware());
 }
 app.use(proxyPlugin.routes());
 
-//socket proxy
-let socketProxy = (req,socket,head) => {
-	let uri = {
-		host: req.url.split(':')[0],
-		port: req.url.split(':')[1] || 5390
-	},
-	headers = {
-        'Connection': 'keep-alive',
-        'Proxy-Agent': 'Qiyi Proxy'
-	},
-	socketConnect = net.createConnection(uri,() => {
-		let cb = err => {
-			if(err){
-				console.log('request error:'+err.message);
-				socketConnect.end();
-				socket.end();
-				throw new Error(err);
-			}else{
-				socketConnect.pipe(socket);
-                socket.pipe(socketConnect);
-			}
-		};
-		try{
-			let status = 'HTTP/1.1 200 Connection established\r\n',
-				headerLines = '';
-			for(let key in headers)
-				headerLines += key + ': ' + headers[key] + '\r\n';
-			 socket.write(status + headerLines + '\r\n', 'UTF-8', cb);
-		}catch(e){
-			console.log('socketConnect error:',+ e.message);
-		}
-	});
-	socketConnect.setNoDelay(true);
-	socketConnect.on('error', e => {
-		console.log(e)
-	});
-}
+
 //http proxy
 let httpServer = http.createServer(app.callback());
 httpServer.on('connect',socketProxy);
