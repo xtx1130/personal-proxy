@@ -42,7 +42,7 @@ httpServer.listen(8888,() => {
 let httpsServer = https.createServer(options, app.callback());
 httpsServer.on('connect',function(req,res){
 	//TO DO :整合http和https
-	console.log('httpsServer')
+	console.log('httpsServer');
 });
 httpsServer.listen(8089, function () {
     console.log('Https server listening on port 8089');
