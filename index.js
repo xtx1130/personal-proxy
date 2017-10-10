@@ -14,6 +14,7 @@ const socketProxy = require('./plugins/socketProxy');
 
 global._path = __dirname;
 
+const port = process.argv[2];
 const app = new Koa();
 const router = new Router();
 const options = {
@@ -35,7 +36,7 @@ app.use(proxyPlugin.routes());
 //http proxy
 let httpServer = http.createServer(app.callback());
 httpServer.on('connect',socketProxy);
-httpServer.listen(8888,() => {
+httpServer.listen(port,() => {
   	console.log('http server is running at 8888');
 });
 //https proxy
@@ -44,6 +45,6 @@ httpsServer.on('connect',function(req,res){
 	//TO DO :整合http和https
 	console.log('httpsServer');
 });
-httpsServer.listen(8089, function () {
+httpsServer.listen(Number(port)+10, function () {
     console.log('Https server listening on port 8089');
 });

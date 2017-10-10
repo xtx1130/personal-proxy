@@ -5,4 +5,3 @@ COPY . /usr/src/personal-proxy
 RUN cd /usr/src/personal-proxy;npm install;npm install -g forever
 CMD ["/usr/src/personal-proxy/start.sh","2"]
 EXPOSE 8080
-EXPOSE 8081
